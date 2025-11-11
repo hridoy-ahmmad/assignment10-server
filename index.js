@@ -34,6 +34,12 @@ async function run() {
     })
 
 
+    app.post('/cars',async(req, res)=>{
+      const data = req.body
+      console.log(data);
+      const result = carsCollection.insertOne(data)
+      res.send(result)
+    })
 
 
     // Send a ping to confirm a successful connection
