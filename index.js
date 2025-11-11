@@ -27,9 +27,26 @@ async function run() {
 
     const db = client.db('assignment10')
     const carsCollection = db.collection('cars_collection')
+    const usersCollection = db.collection('users_collection')
 
     app.get('/cars', async (req, res) => {
-      const result = await carsCollection.find().toArray()
+    const result = await carsCollection.find().toArray();
+      res.send(result)
+    })
+    app.post('/users', async(req, res)=>{
+      const newUser = req.body
+      const email = newUser.email
+      const query = {email: email}
+      const oldUser = await usersCollection.findOne(query)
+      if(oldUser){
+        res.send('User already exist')
+      } else{
+        const result = await usersCollection.insertOne(newUser)
+      res.send(result)
+      }
+    })
+    app.get('/latest_cars', async(req,res)=>{
+      const result = await carsCollection.find().sort({date:-1}).limit(6).toArray()
       res.send(result)
     })
     app.post('/cars',async(req, res)=>{
