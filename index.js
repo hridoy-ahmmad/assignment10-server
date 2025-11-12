@@ -71,8 +71,8 @@ async function run() {
       if (oldBooked) {
         res.send('The car  already has been bookd')
       } else {
-        
-        if(!data.status){
+
+        if (!data.status) {
           data.status = 'Booked'
         }
         const result = await bookedCollection.insertOne(data)
@@ -93,6 +93,16 @@ async function run() {
       )
     })
 
+    app.put('/cars/:id', async (req, res) => {
+      const { id } = req.params
+      const data = req.body
+      const filter = { _id: new ObjectId(id)  }
+      const update = {
+        $set: data
+      }
+      const result = await carsCollection.updateOne(filter, update)
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
