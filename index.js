@@ -72,9 +72,7 @@ async function run() {
         res.send('The car  already has been bookd')
       } else {
 
-        if (!data.status) {
-          data.status = 'Booked'
-        }
+       
         const result = await bookedCollection.insertOne(data)
         res.send(result)
       }
@@ -103,6 +101,21 @@ async function run() {
       const result = await carsCollection.updateOne(filter, update)
       res.send(result)
     })
+
+    // app.put('/status/:id', async (req, res) => {
+    //   const { id } = req.params
+    //   const filter = { _id: new ObjectId(id)}
+    //   const update = {
+    //     $set: {
+    //       status:'Booked'
+    //     }
+    //   }
+    //   const result = await carsCollection.updateOne(filter, update)
+    //   res.send(result)
+    // })
+
+    
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
