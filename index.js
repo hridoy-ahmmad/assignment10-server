@@ -28,45 +28,67 @@ async function run() {
     const db = client.db('assignment10')
     const carsCollection = db.collection('cars_collection')
     const usersCollection = db.collection('users_collection')
+    const bookedCollection = db.collection('booked_collection')
 
     app.get('/cars', async (req, res) => {
-    const result = await carsCollection.find().toArray();
+      const result = await carsCollection.find().toArray();
       res.send(result)
     })
-    app.post('/users', async(req, res)=>{
+    app.post('/users', async (req, res) => {
       const newUser = req.body
       const email = newUser.email
-      const query = {email: email}
+      const query = { email: email }
       const oldUser = await usersCollection.findOne(query)
-      if(oldUser){
+      if (oldUser) {
         res.send('User already exist')
-      } else{
+      } else {
         const result = await usersCollection.insertOne(newUser)
-      res.send(result)
+        res.send(result)
       }
     })
-    app.get('/latest_cars', async(req,res)=>{
-      const result = await carsCollection.find().sort({date:-1}).limit(6).toArray()
+    app.get('/latest_cars', async (req, res) => {
+      const result = await carsCollection.find().sort({ date: -1 }).limit(6).toArray()
       res.send(result)
     })
-    app.post('/cars',async(req, res)=>{
+    app.post('/cars', async (req, res) => {
       const data = req.body
       console.log(data);
-      const result = carsCollection.insertOne(data)
+      const result = await carsCollection.insertOne(data)
       res.send(result)
     })
 
-    app.delete('/cars/:id', async(req,res)=>{
+    app.delete('/cars/:id', async (req, res) => {
       const id = req.params.id
-      const query = {_id: new ObjectId(id)}
+      const query = { _id: new ObjectId(id) }
       const result = await carsCollection.deleteOne(query)
       res.send(result)
     })
-    
 
-    app.get('/cars/:id', async(req, res)=>{
-      const {id} = req.params
-      const result = await carsCollection.findOne({_id: new ObjectId(id)})
+    app.post('/bookedCars', async (req, res) => {
+      const data = req.body
+      const { carId } = data
+      const oldBooked = await bookedCollection.findOne({ carId: carId, providerEmail: data.providerEmail })
+      if (oldBooked) {
+        res.send('The car  already has been bookd')
+      } else {
+        
+        if(!data.status){
+          data.status = 'Booked'
+        }
+        const result = await bookedCollection.insertOne(data)
+        res.send(result)
+      }
+    })
+
+    app.get('/bookedCars', async (req, res) => {
+      const email = req.query.email
+      const result = await bookedCollection.find({ email: email }).toArray()
+      res.send(result)
+    })
+
+    app.get('/cars/:id', async (req, res) => {
+      const { id } = req.params
+      const result = await carsCollection.findOne({ _id: new ObjectId(id) })
       res.send(result
       )
     })
