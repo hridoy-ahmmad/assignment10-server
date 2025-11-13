@@ -102,17 +102,17 @@ async function run() {
       res.send(result)
     })
 
-    // app.put('/status/:id', async (req, res) => {
-    //   const { id } = req.params
-    //   const filter = { _id: new ObjectId(id)}
-    //   const update = {
-    //     $set: {
-    //       status:'Booked'
-    //     }
-    //   }
-    //   const result = await carsCollection.updateOne(filter, update)
-    //   res.send(result)
-    // })
+    app.put('/status/:id', async (req, res) => {
+      const { id } = req.params
+      const filter = { _id: new ObjectId(id)}
+      const update = {
+        $set: {
+          status:'Unavailable'
+        }
+      }
+      const result = await carsCollection.updateOne(filter, update)
+      res.send(result)
+    })
 
     
 
