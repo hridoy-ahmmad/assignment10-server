@@ -1,4 +1,3 @@
-
 const express = require('express')
 const cors = require('cors')
 require('dotenv').config()
@@ -10,7 +9,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const uri =`mongodb+srv://${process.env.USER_NAME}:${process.env.PASS}@cluster0.yzzlbw3.mongodb.net/?appName=Cluster0`;
+const uri = `mongodb+srv://${process.env.USER_NAME}:${process.env.PASS}@cluster0.yzzlbw3.mongodb.net/?appName=Cluster0`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -32,7 +31,7 @@ async function run() {
     const bookedCollection = db.collection('booked_collection')
 
     app.get('/cars', async (req, res) => {
-      const result = await carsCollection.find().toArray();
+      const result = await carsCollection.find().sort({ date: -1 }).toArray();
       res.send(result)
     })
     app.post('/users', async (req, res) => {
@@ -73,7 +72,7 @@ async function run() {
         res.send('The car  already has been bookd')
       } else {
 
-       
+
         const result = await bookedCollection.insertOne(data)
         res.send(result)
       }
@@ -95,7 +94,7 @@ async function run() {
     app.put('/cars/:id', async (req, res) => {
       const { id } = req.params
       const data = req.body
-      const filter = { _id: new ObjectId(id)  }
+      const filter = { _id: new ObjectId(id) }
       const update = {
         $set: data
       }
@@ -105,21 +104,20 @@ async function run() {
 
     app.put('/status/:id', async (req, res) => {
       const { id } = req.params
-      const filter = { _id: new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) }
       const update = {
         $set: {
-          status:'Unavailable'
+          status: 'Unavailable'
         }
       }
       const result = await carsCollection.updateOne(filter, update)
       res.send(result)
     })
 
-    
 
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
